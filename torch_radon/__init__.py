@@ -93,19 +93,22 @@ class BaseRadon(abc.ABC):
 
         padded_sinogram = F.pad(sinogram.float(), (0, pad, 0, 0))
         # TODO should be possible to use onesided=True saving memory and time
-        sino_fft = torch.rfft(padded_sinogram, 1, normalized=True, onesided=False)
+        # sino_fft = torch.rfft(padded_sinogram, 1, normalized=True, onesided=False)  # torch 1.7.0
+        sino_fft = torch.fft.fft(padded_sinogram, norm='ortho')  # torch 1.12.0
+        sino_fft = torch.stack((sino_fft.real, sino_fft.imag), -1)  # yes, do it
 
         # get filter and apply
         f = self.fourier_filters.get(padded_size, filter_name, sinogram.device)
         filtered_sino_fft = sino_fft * f
 
         # Inverse fft
-        filtered_sinogram = torch.irfft(filtered_sino_fft, 1, normalized=True, onesided=False)
+        # filtered_sinogram = torch.irfft(filtered_sino_fft, 1, normalized=True, onesided=False)  # torch 1.7.0
+        filtered_sinogram = torch.fft.ifft(torch.complex(filtered_sino_fft[..., 0], filtered_sino_fft[..., 1]), norm='ortho')  # torch 1.12.0
 
         # pad removal and rescaling
         filtered_sinogram = filtered_sinogram[:, :, :-pad] * (np.pi / (2 * n_angles))
 
-        return filtered_sinogram.to(dtype=sinogram.dtype)
+        return np.real(filtered_sinogram).to(dtype=sinogram.dtype)
 
     def backward(self, sinogram):
         r"""Same as backprojection"""
