@@ -1,54 +1,42 @@
-# TorchRadon-Mod: Fast Differentiable Routines for Computed Tomography
+# [TorchRadon](https://github.com/matteo-ronchetti/torch-radon)-Mod: Fast Differentiable Routines for Computed Tomography
 
-TorchRadon is a PyTorch extension written in CUDA that implements differentiable routines
-for solving computed tomography (CT) reconstruction problems.
+[TorchRadon](https://github.com/matteo-ronchetti/torch-radon) is a PyTorch extension written in CUDA that implements differentiable routines for solving computed tomography (CT) reconstruction problems.
 
-The library is designed to help researchers working on CT problems to combine deep learning
-and model-based approaches.
+The library is designed to help researchers working on CT problems to combine deep learning and model-based approaches.
 
-### What modified?
+<h2 align="center" style="color: black">
+  Installation
+</h2>
 
-1. **Add your own [CUDA GPUs - Compute Capability](https://developer.nvidia.com/cuda-gpus) in:**
+- On Linux with PyTorch >= 1.8, CUDA and GCC, run
 
-```
-torch-radon/build_tools/__init__.py
-```
+  ```sh
+  $ git clone git@github.com:CandleHouse/torch-radon-mod.git --depth 1
+  $ cd torch-radon-mod
+  $ export CUDA_HOME="/usr/local/cuda" # Specify this according to your situation.
+  $ python setup.py install
+  ```
 
-line 61:
+- Run `examples/fbp.py` to check whether it is successfully installed.
 
-```python
-def build(compute_capabilities=(60, 61, 70, 75, 80, 86), verbose=False, cuda_home="/usr/local/cuda", cxx="g++"):
-```
-
-
-
-2. **Support torch >= 1.8.0:**
-
-torch version >= 1.8.0 drop the use of *torch.rfft* and *torch.irfft*, so use fft in module *torch.fft*.
-
-```
-torch-radon/torch_radon/__init__.py
-```
-
-line 96:
-
-```python
-sino_fft = torch.fft.fft(padded_sinogram, norm='ortho')  # torch 1.12.0
-sino_fft = torch.stack((sino_fft.real, sino_fft.imag), -1)  # yes, do it
-```
-
-line 103:
-
-```python
-filtered_sinogram = torch.fft.ifft(torch.complex(filtered_sino_fft[..., 0], filtered_sino_fft[..., 1]), norm='ortho')  # torch 1.12.0
-```
-
-line 108:
-
-```python
-return np.real(filtered_sinogram).to(dtype=sinogram.dtype)
-```
+<h2 align="center" style="color: blue">
+  What's different?
+</h2>
 
 
+1. **Support CUDA GPUs with different [Compute Capability](https://developer.nvidia.com/cuda-gpus)**.
 
-3. **TODO**
+   In `setup.py`, modify Line 11 if you need.
+   
+   ```py
+   build(compute_capabilities=(60, 61, 70, 75, 80, 86), cuda_home=cuda_home)
+   ```
+
+
+2. **Support torch >= 1.8.0.**
+
+   torch >= 1.8.0 deprecated *torch.rfft* and *torch.irfft*. We should use fft in module *torch.fft* as substations. Refer to the [modifications here](https://github.com/CandleHouse/torch-radon-mod/commit/4fff5999c788829da9b044e3d22db1c650043ead#diff-d039beda73403cb00f204b3df845779f304448852484347ce8b18b0449d88b1f).
+
+3. **Remove codes that we don't use.**
+
+   e.g. alpha-shearlet transform, benchmarks, etc.

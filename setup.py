@@ -8,16 +8,16 @@ with open("README.md", "r") as fh:
 
 cuda_home = os.getenv("CUDA_HOME", "/usr/local/cuda")
 print(f"Using CUDA_HOME={cuda_home}")
-build(cuda_home=cuda_home)
+build(compute_capabilities=(60, 61, 70, 75, 80, 86), cuda_home=cuda_home)
 
 setup(name='torch_radon',
-      version="1.0.0",
+      version="1.0.m0",
       author="Matteo Ronchetti",
       author_email="mttronchetti@gmail.com",
       description="Radon transform in PyTorch",
       long_description=long_description,
       long_description_content_type="text/markdown",
-      url="https://github.com/matteo-ronchetti/torch-radon",
+      url="https://github.com/CandleHouse/torch-radon-mod",
 
       packages=['torch_radon'],
       package_dir={
@@ -41,7 +41,6 @@ setup(name='torch_radon',
           "License :: OSI Approved :: GNU General Public License v3 (GPLv3)"
       ],
       install_requires=[
-          "scipy",
-          "alpha-transform"
+          "scipy"
       ],
       )

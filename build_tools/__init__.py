@@ -58,7 +58,7 @@ def get_cuda_version(cuda_home):
     return int(str_version.replace(".", ""))
 
 
-def build(compute_capabilities=(60, 61, 70, 75, 80, 86), verbose=False, cuda_home="/usr/local/cuda", cxx="g++"):
+def build(compute_capabilities, verbose=False, cuda_home="/usr/local/cuda", cxx="g++"):
     cuda_version = get_cuda_version(cuda_home)
     nvcc = f"{cuda_home}/bin/nvcc"
     include_dirs = ["./include"]
@@ -104,16 +104,3 @@ def clean():
     print(f"\u001b[32mCleaning\u001b[0m")
     if os.path.exists("objs"):
         shutil.rmtree("objs")
-
-
-if __name__ == "__main__":
-    # args = argparse.ArgumentParser()
-    # args.add_argument("-cuda-home", default=os.getenv("CUDA_HOME", "/usr/local/cuda"))
-    #
-    # args = args.parse_args()
-    # print(args.cuda_home)
-
-    if len(sys.argv) < 2 or sys.argv[1] == "build":
-        build(cuda_home=os.getenv("CUDA_HOME", "/usr/local/cuda"))
-    elif sys.argv[1] == "clean":
-        clean()

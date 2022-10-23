@@ -15,7 +15,7 @@ from .differentiable_functions import RadonForward, RadonBackprojection
 from .utils import normalize_shape
 from .filtering import FourierFilters
 
-__version__ = "1.0.0"
+__version__ = "1.0.m0"
 
 
 class BaseRadon(abc.ABC):
