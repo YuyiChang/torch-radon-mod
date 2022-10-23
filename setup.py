@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 cuda_home = os.getenv("CUDA_HOME", "/usr/local/cuda")
 print(f"Using CUDA_HOME={cuda_home}")
-build(cuda_home=cuda_home)
+build(compute_capabilities=(60, 61, 70, 75, 80, 86), cuda_home=cuda_home)
 
 setup(name='torch_radon',
       version="1.0.m0",
